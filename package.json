@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.758.0",
     "alchemy-sdk": "^3.5.4",
     "ethers": "^5.7.2",
     "gsap": "^3.12.7",

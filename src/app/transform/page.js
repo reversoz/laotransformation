@@ -2,6 +2,13 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { ethers } from "ethers";
+import { StarEvents } from "@/components/Stars";
+
+const NEW_CONTRACT_ABI = [
+  "function transmit(uint256[] calldata tokenIds) external",
+  "function isTransformationPeriodActive() external view returns (bool)",
+];
 
 export default function TransformPage() {
   const router = useRouter();
@@ -18,15 +25,80 @@ export default function TransformPage() {
 
   const getNewImageUrl = (nftId) => {
     const number = nftId.toString().replace(/\D/g, "");
-    return `${baseUri}${number}_museum.png`;
+    return `${baseUri}${number}.png`;
   };
 
-  const handleConvert = () => {
-    setIsConverting(true);
-    setTimeout(() => {
+  const updateMetadata = async (tokenIds) => {
+    try {
+      const response = await fetch("/api/update-metadata", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ tokenIds }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || "Failed to update metadata");
+      }
+
+      return data;
+    } catch (error) {
+      console.error("Metadata update error:", error);
+      throw error;
+    }
+  };
+
+  const handleConvert = async () => {
+    try {
+      setIsConverting(true);
+
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+
+      const newContract = new ethers.Contract(
+        process.env.NEXT_PUBLIC_NEW_CONTRACT_ADDRESS,
+        NEW_CONTRACT_ABI,
+        signer
+      );
+
+      // Check if transformation period is active
+      const isActive = await newContract.isTransformationPeriodActive();
+      if (!isActive) {
+        throw new Error("Transformation period has ended");
+      }
+
+      // Prepare token IDs array
+      const tokenIds = selectedNfts.map((nft) => nft.id.toString());
+
+      // Call transmit function
+      const tx = await newContract.transmit(
+        tokenIds.map((id) => ethers.BigNumber.from(id))
+      );
+
+      // Wait for transaction confirmation
+      const receipt = await tx.wait();
+
+      if (receipt.status === 1) {
+        // Get token IDs
+        const tokenIds = selectedNfts.map((nft) => nft.id.toString());
+        // Update metadata
+        await updateMetadata(tokenIds);
+        // Start animation and navigation
+        StarEvents.animateToCenter();
+        setTimeout(() => {
+          window.location.href = "/result";
+        }, 1500);
+      } else {
+        throw new Error("Transaction failed");
+      }
+    } catch (error) {
+      console.error("Conversion error:", error);
+    } finally {
       setIsConverting(false);
-      router.push("/result");
-    }, 2000);
+    }
   };
 
   return (
@@ -104,7 +176,7 @@ export default function TransformPage() {
                 ? "bg-gray-600 cursor-not-allowed"
                 : "bg-white text-black hover:bg-gray-200 transition-all"
             }`}>
-          {isConverting ? "CONVERTING..." : "CONVERT"}
+          {isConverting ? "TRANSFORMING..." : "TRANSFORM"}
         </button>
       </div>
     </div>
