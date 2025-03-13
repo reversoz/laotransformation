@@ -2,7 +2,12 @@
 
 import { useRef, useEffect, useState } from "react";
 
-export default function SelectedImagesBar({ selectedNfts, nfts, onContinue }) {
+export default function SelectedImagesBar({
+  selectedNfts,
+  nfts,
+  onContinue,
+  isApproving,
+}) {
   const scrollContainerRef = useRef(null);
   const [showLeftScroll, setShowLeftScroll] = useState(false);
   const [showRightScroll, setShowRightScroll] = useState(false);
@@ -73,26 +78,10 @@ export default function SelectedImagesBar({ selectedNfts, nfts, onContinue }) {
     return Math.min(Math.max(scrollProgress, 0), 100);
   };
 
-  const handleContinue = () => {
-    const selectedNftsData = selectedNfts.map((id) => {
-      const nft = nfts.find((n) => n.id === id);
-      console.log("Found NFT:", nft);
-      return {
-        id: nft.id,
-        name: nft.name,
-        imageUrl: nft.imageUrl,
-      };
-    });
-    console.log("Storing data:", selectedNftsData);
-    localStorage.setItem("selectedNfts", JSON.stringify(selectedNftsData));
-
-    onContinue();
-  };
-
   if (selectedNfts.length === 0) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-gray-900/90 backdrop-blur-md border-t border-white/20 z-50 py-6">
+    <div className="fixed bottom-0 left-0 right-0 bg-black/50 backdrop-blur-sm z-50 p-8">
       <div className="mx-auto px-8">
         <div className="flex items-center gap-8">
           <div className="flex-1 relative min-w-0">
@@ -181,9 +170,15 @@ export default function SelectedImagesBar({ selectedNfts, nfts, onContinue }) {
           </div>
 
           <button
-            onClick={handleContinue}
-            className="w-48 bg-white text-gray-900 font-bold py-4 px-8 text-xl rounded-full transition-all duration-300 hover:scale-105 hover:shadow-lg">
-            CONTINUE
+            onClick={onContinue}
+            disabled={isApproving}
+            className={`w-48 font-bold py-4 px-8 text-xl rounded-full transition-all duration-300
+              ${
+                isApproving
+                  ? "bg-gray-600 cursor-not-allowed"
+                  : "bg-white text-black hover:bg-gray-200 hover:scale-105 hover:shadow-lg"
+              }`}>
+            {isApproving ? "APPROVING..." : "CONTINUE"}
           </button>
         </div>
       </div>

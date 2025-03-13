@@ -6,6 +6,12 @@ import { useRouter } from "next/navigation";
 import ImageCard from "@/components/ImageCard";
 import SelectedImagesBar from "@/components/SelectedImagesBar";
 import { getNFTsForCollection } from "@/services/nftService";
+import { ethers } from "ethers";
+
+const ERC721_ABI = [
+  "function setApprovalForAll(address operator, bool approved) external",
+  "function isApprovedForAll(address owner, address operator) external view returns (bool)",
+];
 
 export default function SelectPage() {
   const { account, isConnected } = useWallet();
@@ -13,6 +19,7 @@ export default function SelectPage() {
   const [selectedNfts, setSelectedNfts] = useState([]);
   const [nfts, setNfts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isApproving, setIsApproving] = useState(false);
 
   useEffect(() => {
     if (!isConnected) {
@@ -45,8 +52,61 @@ export default function SelectPage() {
     });
   };
 
-  const handleContinue = () => {
-    router.push("/transform");
+  const handleContinue = async () => {
+    if (selectedNfts.length === 0) {
+      alert("Please select at least one NFT");
+      return;
+    }
+
+    try {
+      setIsApproving(true);
+
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const address = await signer.getAddress();
+
+      const contract = new ethers.Contract(
+        process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS,
+        ERC721_ABI,
+        provider
+      );
+
+      // Check if already approved
+      const isApproved = await contract.isApprovedForAll(
+        address,
+        process.env.NEXT_PUBLIC_NEW_CONTRACT_ADDRESS
+      );
+
+      if (!isApproved) {
+        // Request approval
+        const contractWithSigner = contract.connect(signer);
+        const tx = await contractWithSigner.setApprovalForAll(
+          process.env.NEXT_PUBLIC_NEW_CONTRACT_ADDRESS,
+          true
+        );
+
+        // Wait for transaction to be mined
+        await tx.wait();
+      }
+
+      // Store selected NFTs and navigate
+      const selectedNftsData = selectedNfts.map((id) => {
+        const nft = nfts.find((n) => n.id === id);
+        return {
+          id: nft.id,
+          name: nft.name,
+          imageUrl: nft.imageUrl,
+        };
+      });
+
+      localStorage.setItem("selectedNfts", JSON.stringify(selectedNftsData));
+      router.push("/transform");
+    } catch (error) {
+      console.error("Error during approval:", error);
+      alert("Failed to approve collection. Please try again.");
+    } finally {
+      setIsApproving(false);
+    }
   };
 
   if (!isConnected) {
@@ -92,11 +152,14 @@ export default function SelectPage() {
         )}
       </div>
 
-      <SelectedImagesBar
-        selectedNfts={selectedNfts}
-        nfts={nfts}
-        onContinue={handleContinue}
-      />
+      {selectedNfts.length > 0 && (
+        <SelectedImagesBar
+          selectedNfts={selectedNfts}
+          nfts={nfts}
+          onContinue={handleContinue}
+          isApproving={isApproving}
+        />
+      )}
     </main>
   );
 }
