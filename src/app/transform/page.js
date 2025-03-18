@@ -86,8 +86,6 @@ export default function TransformPage() {
         const tokenIds = selectedNfts.map((nft) => nft.id.toString());
         // Update metadata
         await updateMetadata(tokenIds);
-        // Start animation and navigation
-        StarEvents.animateToCenter();
         setTimeout(() => {
           window.location.href = "/result";
         }, 1500);
