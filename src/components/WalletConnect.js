@@ -67,7 +67,7 @@ export default function WalletConnect({ customStyle = false }) {
         <button
           onClick={handleConnect}
           disabled={isConnecting}
-          className={buttonStyles}>
+          className={buttonStyles + " hover:scale-105 hover:shadow-lg hover:cursor-pointer"}>
           {isConnecting ? "Connecting..." : "CONNECT"}
         </button>
       ) : (

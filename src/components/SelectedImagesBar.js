@@ -177,7 +177,7 @@ export default function SelectedImagesBar({
                 isApproving
                   ? "bg-gray-600 cursor-not-allowed"
                   : "bg-white text-black hover:bg-gray-200 hover:scale-105 hover:shadow-lg"
-              }`}>
+              }` + " hover:scale-105 hover:shadow-lg hover:cursor-pointer"}>
             {isApproving ? "APPROVING..." : "CONTINUE"}
           </button>
         </div>
