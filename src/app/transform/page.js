@@ -64,7 +64,7 @@ export default function TransformPage() {
         // Get token IDs
         const tokenIds = selectedNfts.map((nft) => nft.id.toString());
         // Update metadata
-        // await updateMetadata(tokenIds);
+        await updateMetadata(tokenIds);
       } else {
         throw new Error("Transaction failed");
       }
@@ -112,37 +112,37 @@ export default function TransformPage() {
 
   const handleConvert = async () => {
     try {
+      
+
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+
+      const newContract = new ethers.Contract(
+        process.env.NEXT_PUBLIC_NEW_CONTRACT_ADDRESS,
+        NEW_CONTRACT_ABI,
+        signer
+      );
+
+      // Check if transformation period is active
+      const isActive = await newContract.isTransformationPeriodActive();
+      if (!isActive) {
+        throw new Error("Transformation period has ended");
+      }
+
+      // Prepare token IDs array
+      const tokenIds = selectedNfts.map((nft) => nft.id.toString());
+
+      // Call transmit function
+      const tx = await newContract.transmit(
+        tokenIds.map((id) => ethers.BigNumber.from(id))
+      );
+
       setIsConverting(true);
       setShowVideo(true);
 
-      // const provider = new ethers.providers.Web3Provider(window.ethereum);
-      // const signer = provider.getSigner();
-
-      // const newContract = new ethers.Contract(
-      //   process.env.NEXT_PUBLIC_NEW_CONTRACT_ADDRESS,
-      //   NEW_CONTRACT_ABI,
-      //   signer
-      // );
-
-      // // Check if transformation period is active
-      // const isActive = await newContract.isTransformationPeriodActive();
-      // if (!isActive) {
-      //   throw new Error("Transformation period has ended");
-      // }
-
-      // // Prepare token IDs array
-      // const tokenIds = selectedNfts.map((nft) => nft.id.toString());
-
-      // // Call transmit function
-      // const tx = await newContract.transmit(
-      //   tokenIds.map((id) => ethers.BigNumber.from(id))
-      // );
-
-      // // Wait for transaction confirmation
-      // const receipt = await tx.wait();
-      // setReceiptState(receipt.status);
-      setReceiptState(1);
-
+      // Wait for transaction confirmation
+      const receipt = await tx.wait();
+      setReceiptState(receipt.status);
       
     } catch (error) {
       console.error("Conversion error:", error);
