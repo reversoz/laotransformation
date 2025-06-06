@@ -13,12 +13,12 @@ export default function WalletConnect({ customStyle = false }) {
     try {
       setIsConnecting(true);
 
-      // Request network switch to Sepolia
+      // Request network switch to Ethereum Mainnet
       if (window.ethereum) {
         try {
           await window.ethereum.request({
             method: "wallet_switchEthereumChain",
-            params: [{ chainId: "0xaa36a7" }], // Chain ID for Sepolia
+            params: [{ chainId: "0x1" }], // Chain ID for Ethereum Mainnet
           });
         } catch (switchError) {
           // This error code indicates that the chain has not been added to MetaMask
@@ -28,20 +28,20 @@ export default function WalletConnect({ customStyle = false }) {
                 method: "wallet_addEthereumChain",
                 params: [
                   {
-                    chainId: "0xaa36a7",
-                    chainName: "Sepolia Test Network",
+                    chainId: "0x1",
+                    chainName: "Ethereum Mainnet",
                     nativeCurrency: {
-                      name: "SepoliaETH",
-                      symbol: "SEP",
+                      name: "Ether",
+                      symbol: "ETH",
                       decimals: 18,
                     },
-                    rpcUrls: ["https://sepolia.infura.io/v3/"],
-                    blockExplorerUrls: ["https://sepolia.etherscan.io/"],
+                    rpcUrls: ["https://mainnet.infura.io/v3/"],
+                    blockExplorerUrls: ["https://etherscan.io/"],
                   },
                 ],
               });
             } catch (addError) {
-              console.error("Error adding Sepolia network:", addError);
+              console.error("Error adding Ethereum Mainnet:", addError);
             }
           }
         }
