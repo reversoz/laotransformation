@@ -17,15 +17,6 @@ export default function Header() {
             }`}>
             HOME
           </Link>
-          <Link
-            href="/about"
-            className={`text-xl font-bold transition-colors duration-300 ${
-              pathname === "/about"
-                ? "text-white"
-                : "text-gray-400 hover:text-white"
-            }`}>
-            ABOUT
-          </Link>
         </div>
       </nav>
     </header>
