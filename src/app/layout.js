@@ -7,7 +7,7 @@ export const metadata = {
   icons: {
     icon: [
       {
-        url: "/oz favicon.svg",
+        url: "/oz logo.svg",
         type: "image/svg+xml",
       },
     ],
