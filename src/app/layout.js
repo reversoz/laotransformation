@@ -2,12 +2,12 @@ import { Providers } from "@/components/Providers";
 import "./globals.css";
 
 export const metadata = {
-  title: "Transform Lao NFTs",
-  description: "Transform your Lao NFTs",
+  title: "Reversoz Transformation",
+  description: "Upgrade your LAO NFTs",
   icons: {
     icon: [
       {
-        url: "/favicon.svg",
+        url: "/oz logo.svg",
         type: "image/svg+xml",
       },
     ],
