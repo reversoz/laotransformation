@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import { ethers } from "ethers";
+import { isMetaMaskMobile } from '@/utils/metamaskMobile';
 
 const NEW_CONTRACT_ABI = [
   "function transmit(uint256[] calldata tokenIds) external",
@@ -112,7 +113,10 @@ export default function TransformPage() {
 
   const handleConvert = async () => {
     try {
-      
+      // Check if we're on mobile and handle accordingly
+      if (!isMetaMaskMobile() && !window.ethereum) {
+        throw new Error("Please install MetaMask to continue");
+      }
 
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
@@ -146,6 +150,7 @@ export default function TransformPage() {
       
     } catch (error) {
       console.error("Conversion error:", error);
+      alert(error.message || "An error occurred during conversion");
     }
   };
 
