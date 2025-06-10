@@ -11,11 +11,11 @@ export default function Header() {
       <nav className="container mx-auto px-6 py-4">
         <div className="flex justify-center gap-12">
           <Link
-            href="/"
+            href="https://www.reversoz.com/"
             className={`text-xl font-bold transition-colors duration-300 ${
               pathname === "/" ? "text-white" : "text-gray-400 hover:text-white"
             }`}>
-            HOME
+            Back to Site
           </Link>
         </div>
       </nav>
