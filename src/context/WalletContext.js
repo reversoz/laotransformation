@@ -2,7 +2,6 @@
 
 import { createContext, useContext, useState, useEffect } from "react";
 import { ethers } from "ethers";
-import { handleMobileWalletConnection } from '@/utils/metamaskMobile';
 
 // Create the context with a default value
 const WalletContext = createContext({
@@ -26,10 +25,6 @@ export function WalletProvider({ children }) {
     if (typeof window === "undefined") return false;
 
     try {
-      // Handle mobile connection
-      const shouldProceed = await handleMobileWalletConnection();
-      if (!shouldProceed) return false;
-
       if (window.ethereum) {
         const accounts = await window.ethereum.request({
           method: "eth_requestAccounts",

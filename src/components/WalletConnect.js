@@ -3,7 +3,6 @@
 import { useWallet } from "@/context/WalletContext";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { isMetaMaskInstalled } from '@/utils/metamaskMobile';
 
 export default function WalletConnect({ customStyle = false }) {
   const { account, isConnected, connectWallet } = useWallet();
@@ -65,26 +64,12 @@ export default function WalletConnect({ customStyle = false }) {
   return (
     <div className="flex flex-col items-center gap-4">
       {!isConnected ? (
-        <>
-          <button
-            onClick={handleConnect}
-            disabled={isConnecting}
-            className={buttonStyles + " hover:scale-105 hover:shadow-lg hover:cursor-pointer"}>
-            {isConnecting ? "Connecting..." : "CONNECT"}
-          </button>
-          {!isMetaMaskInstalled() && (
-            <p className="text-sm text-white/70 mt-2">
-              MetaMask not detected.{" "}
-              <a
-                href="https://metamask.io/download/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline hover:text-white">
-                Download MetaMask
-              </a>
-            </p>
-          )}
-        </>
+        <button
+          onClick={handleConnect}
+          disabled={isConnecting}
+          className={buttonStyles + " hover:scale-105 hover:shadow-lg hover:cursor-pointer"}>
+          {isConnecting ? "Connecting..." : "CONNECT"}
+        </button>
       ) : (
         <div className="text-center">
           <p className="text-green-500 font-bold">Connected!</p>
