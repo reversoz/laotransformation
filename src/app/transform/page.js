@@ -157,32 +157,32 @@ export default function TransformPage() {
           playsInline
           muted
           className="fixed top-0 left-0 w-full h-full object-cover z-10"
-      >
-        <source src="/transformation.mp4" type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
+        >
+          <source src="/transformation.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
       )}
       <div className="min-h-screen relative text-white">
         {/* Fixed Header with Back button */}
-        <div className={`fixed top-0 left-0 right-0 bg-black/50 backdrop-blur-sm z-40 p-8 ${showVideo ? "hidden" : ""}`}>
+        <div className={`fixed top-0 left-0 right-0 bg-black/50 backdrop-blur-sm z-40 p-4 md:p-8 ${showVideo ? "hidden" : ""}`}>
           <button
             onClick={() => router.push("/select")}
-            className="px-8 py-2 rounded-full border-2 border-white/50 hover:bg-white/10 transition-all text-lg hover:scale-105 hover:shadow-lg hover:cursor-pointer">
+            className="px-4 md:px-8 py-2 rounded-full border-2 border-white/50 hover:bg-white/10 transition-all text-base md:text-lg hover:scale-105 hover:shadow-lg hover:cursor-pointer">
             BACK
           </button>
         </div>
 
         {/* Scrollable Content Area */}
-        <div className="pt-28 pb-32 px-8 h-screen overflow-y-auto">
+        <div className="pt-20 md:pt-28 pb-24 md:pb-32 px-4 md:px-8 h-screen overflow-y-auto">
           <div className="max-w-7xl mx-auto">
             {/* NFT transformation grid */}
-            <div className="space-y-12">
+            <div className="space-y-8 md:space-y-12">
               {selectedNfts.map((nft) => (
                 <div
                   key={nft.id}
-                  className="flex items-center justify-center gap-24">
+                  className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-24">
                   {/* Original NFT */}
-                  <div className="w-64 h-64 bg-gray-700 rounded-lg overflow-hidden">
+                  <div className="w-48 h-48 md:w-64 md:h-64 bg-gray-700 rounded-lg overflow-hidden">
                     <img
                       src={nft.imageUrl}
                       alt={nft.name}
@@ -190,11 +190,11 @@ export default function TransformPage() {
                     />
                   </div>
 
-                  {/* Arrow */}
-                  <div className="text-white/50">
+                  {/* Arrow - Rotated on mobile */}
+                  <div className="text-white/50 transform rotate-90 md:rotate-0">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      className="h-16 w-16"
+                      className="h-12 w-12 md:h-16 md:w-16"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor">
@@ -208,7 +208,7 @@ export default function TransformPage() {
                   </div>
 
                   {/* New Image */}
-                  <div className="w-64 h-64 bg-gray-700 rounded-lg overflow-hidden">
+                  <div className="w-48 h-48 md:w-64 md:h-64 bg-gray-700 rounded-lg overflow-hidden">
                     <img
                       src={getNewImageUrl(nft.id)}
                       alt="New Image"
@@ -226,11 +226,11 @@ export default function TransformPage() {
         </div>
 
         {/* Fixed Convert Button */}
-        <div className="fixed bottom-0 left-0 right-0 bg-black/50 backdrop-blur-sm z-50 p-8 flex justify-center">
+        <div className="fixed bottom-0 left-0 right-0 bg-black/50 backdrop-blur-sm z-50 p-4 md:p-8 flex justify-center">
           <button
             onClick={handleConvert}
             disabled={isConverting}
-            className={`px-16 py-4 rounded-full text-2xl font-bold shadow-lg
+            className={`w-full md:w-auto px-8 md:px-16 py-3 md:py-4 rounded-full text-xl md:text-2xl font-bold shadow-lg
               ${
                 isConverting
                   ? "bg-gray-600 cursor-not-allowed"
