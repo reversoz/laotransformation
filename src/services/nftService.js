@@ -22,10 +22,19 @@ const alchemy = new Alchemy(config);
 
 export async function getNFTsForCollection(walletAddress) {
   try {
-    const nfts = await alchemy.nft.getNftsForOwner(walletAddress, {
-      contractAddresses: [process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS],
-    });
-    return nfts.ownedNfts.map((nft) => ({
+    let pageKey = null;
+    let allNfts = [];
+    do {
+      const nfts = await alchemy.nft.getNftsForOwner(walletAddress, {
+        contractAddresses: [process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS],
+        pageKey,
+        pageSize: 100,
+      });
+      allNfts.push(...nfts.ownedNfts);
+      pageKey = nfts.pageKey;
+    } while (pageKey);
+
+    return allNfts.map((nft) => ({
       id: nft.tokenId,
       imageUrl: nft.image.originalUrl,
       name: nft.name,
